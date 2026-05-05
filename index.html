@@ -2,81 +2,82 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>UnTethered - Ultimate Router Dump</title>
+<title>UnTethered - TD-W9970 Ultimate Mod</title>
 <style type="text/css">
-/* --- ORIGINAL TP-LINK STYLING --- */
-body { font-family: Arial, sans-serif; background-color: #E5E5E5; margin: 0; padding: 0; }
+/* --- ROOT STYLING (FLAT PATHS) --- */
+body { font-family: Arial, sans-serif; background-color: #E5E5E5; margin: 0; padding: 0; overflow-x: hidden; }
+#topHeader { height: 90px; background: #09C url(top_bg.jpg) repeat-x; }
 .loginBox { display: block; position: relative; margin-top: 5%; text-align: center; }
-.noteDiv { color: #cc0000; font-family: Arial; width: 395px; text-align: left; margin: 0 auto; font-size: 13px; font-weight: bold; }
-div.picDiv { width: 395px; height: 276px; background: url(../img/login/bg2.png) no-repeat; position: relative; border: 1px solid #ddd; }
+.picDiv { width: 395px; height: 276px; background: url(bg2.png) no-repeat; position: relative; margin: 0 auto; }
 ul { padding: 60px 0 0 0; margin: 0; list-style: none; }
-ul li { height: 34px; width: 222px; margin-bottom: 10px; }
-li.unLi { background: url(../img/login/idunselect.png); margin: 0 auto; }
-li.pwLi { background: url(../img/login/pwunselect.png); margin: 0 auto; }
-input.text { border: 0; height: 26px; line-height: 26px; width: 175px; padding: 0; margin: 4px 0 0 30px; font-size: 14px; outline: none; background: transparent; }
-label.loginBtn { height: 34px; display: inline-block; width: 113px; margin-top: 30px; background: url(../img/login/login_tr.png); cursor: pointer; }
-#copyright { font-size: 9px; color: #6a6969; margin-top: 40px; display: inline-block; }
+ul li { height: 34px; width: 222px; margin: 0 auto 10px auto; }
+.unLi { background: url(idunselect.png); }
+.pwLi { background: url(pwunselect.png); }
+input.text { border: 0; height: 26px; line-height: 26px; width: 175px; padding: 0; margin: 4px 0 0 30px; font-size: 14px; outline: none; background: transparent; color: #333; }
+.loginBtn { height: 34px; display: inline-block; width: 113px; margin-top: 30px; background: url(login_tr.png); cursor: pointer; border:none; }
 
-/* --- UNTETHERED DASHBOARD STYLING --- */
-#unTetheredDashboard { display: none; padding: 20px; background: #f4f7f9; min-height: 100vh; }
-.dump-header { background: #00A8FF; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
-.card { background: #fff; border-radius: 4px; border: 1px solid #ccc; padding: 15px; box-shadow: 2px 2px 0px #ddd; }
-.card h3 { margin: 0 0 10px 0; font-size: 14px; color: #0072bc; border-bottom: 2px solid #00A8FF; display: inline-block; }
-.data-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
-.label { color: #666; font-weight: bold; }
-.value { color: #333; font-family: "Courier New", monospace; }
-.live-pulse { height: 8px; width: 8px; background: #4cd137; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px #4cd137; }
-.btn-refresh { background: #0072bc; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 3px; font-size: 12px; }
-.btn-refresh:hover { background: #005a96; }
+/* --- UNTETHERED DASHBOARD HUD --- */
+#dashboard { display: none; padding: 20px; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* --- IP INPUT FIELD --- */
-.router-ip-box { margin-bottom: 10px; }
-.router-ip-box input { border: 1px solid #ccc; padding: 5px; text-align: center; border-radius: 4px; width: 212px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+.card { background: white; border: 1px solid #ccc; padding: 15px; border-top: 3px solid #00A8FF; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
+.card h3 { margin: 0 0 10px 0; font-size: 14px; color: #0072bc; text-transform: uppercase; letter-spacing: 1px; }
+
+/* --- DATA ROWS --- */
+.row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 12px; }
+.label { color: #777; font-weight: bold; }
+.value { color: #000; font-family: 'Courier New', monospace; font-weight: bold; }
+.live-green { color: #2ecc71; text-shadow: 0 0 5px rgba(46, 204, 113, 0.3); }
+
+/* --- LIVE TRAFFIC MONITOR --- */
+.monitor-box { background: #222; color: #0f0; padding: 10px; font-family: monospace; font-size: 11px; border-radius: 3px; margin-top: 10px; height: 100px; overflow-y: hidden; position: relative; }
+.bar { height: 4px; background: #00A8FF; transition: width 0.3s; margin-top: 5px; }
+
+/* --- DEVICE TABLE --- */
+table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+th { background: #f0f0f0; text-align: left; padding: 8px; border-bottom: 2px solid #00A8FF; }
+td { padding: 8px; border-bottom: 1px solid #eee; }
+.vendor-icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 5px; }
 </style>
 
 <script type="text/javascript">
-// Mock router data - In a real scenario, this would be populated by fetching /cgi/info
-var routerData = {
-    model: "TD-W9970",
-    firmware: "0.9.1 0.1 v004c.0 Build 230512 Rel.54321n",
-    uptime: "12 Days, 04:22:11",
-    cpuLoad: "18%",
-    memUsage: "44.2MB / 128MB",
-    temp: "44°C",
-    snrDown: "8.4 dB",
-    snrUp: "10.2 dB",
-    attenuation: "14.1 dB",
-    crcErrors: "0",
-    fecErrors: "124",
-    wanIp: "182.xxx.xxx.xxx",
-    connectionType: "VDSL2 (PTM)",
-    packetsSent: "1,244,592",
-    packetsReceived: "4,892,101"
-};
+function doLogin() {
+    const ip = document.getElementById("routerIP").value;
+    const tip = document.getElementById("tip");
+    
+    tip.innerHTML = "Authenticating with UnTethered Kernel at " + ip + "...";
+    tip.style.color = "#00A8FF";
 
-function doUnTetheredDump() {
-    var ip = document.getElementById("routerIP").value;
-    var user = document.getElementById("userName").value;
-    
-    // In a real scenario, you'd use fetch(`http://${ip}/cgi/info`)
-    // For GitHub Pages, we simulate the 'handshake'
-    document.getElementById("tip").innerHTML = "Connecting to " + ip + "...";
-    
-    setTimeout(function() {
+    // Simulate "Deep Dump" handshake
+    setTimeout(() => {
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("topHeader").style.display = "none";
-        document.getElementById("unTetheredDashboard").style.display = "block";
-        updateLiveStats();
-    }, 1500);
+        document.getElementById("dashboard").style.display = "block";
+        startLiveFeed();
+    }, 1200);
 }
 
-function updateLiveStats() {
-    // Randomize some values to look "Live"
-    setInterval(function() {
-        var cpu = Math.floor(Math.random() * 30) + 5;
+function startLiveFeed() {
+    const logs = document.getElementById("liveLogs");
+    const trafficBar = document.getElementById("trafficBar");
+    
+    setInterval(() => {
+        // Randomize Data for "Live" effect
+        const cpu = Math.floor(Math.random() * 15) + 5;
+        const down = (Math.random() * 50 + 20).toFixed(2);
+        const up = (Math.random() * 10 + 2).toFixed(2);
+        
         document.getElementById("val-cpu").innerText = cpu + "%";
-        document.getElementById("val-packets").innerText = (Math.floor(Math.random() * 1000) + 5000) + " pkt/s";
+        document.getElementById("val-down").innerText = down + " Mbps";
+        document.getElementById("val-up").innerText = up + " Mbps";
+        trafficBar.style.width = (cpu * 2) + "%";
+
+        // Add mock log lines
+        const newLog = document.createElement("div");
+        newLog.innerText = `[${new Date().toLocaleTimeString()}] INBOUND PACKET: 192.168.1.104 -> WAN (ACK)`;
+        logs.prepend(newLog);
+        if(logs.childNodes.length > 5) logs.removeChild(logs.lastChild);
     }, 2000);
 }
 </script>
@@ -84,79 +85,106 @@ function updateLiveStats() {
 
 <body>
 
-<div id="topHeader" style="height: 90px; background: #09C url(../img/login/top_bg.jpg) repeat-x;">
-    <a href="#"><img id="logo" src="../img/login/top1_1.jpg" style="float: left;" border="0" /></a>
-    <div id="mod" style="height: 87px; margin: 0; text-align: right; overflow: hidden; background: url(../img/login/top1_2.jpg) no-repeat right;" >
-        <p style="font-size: 16px; font-weight: bold; color: #fff; margin: 37px 24px 0 0; padding: 0;">TD-W9970</p>
-        <p style="font-size: 12px; font-weight: bold; color: #fff; margin: 2px 24px 0 0; padding: 0;">UnTethered Mod V1.0</p>
+<div id="topHeader">
+    <a href="#"><img src="top1_1.jpg" style="float: left;" border="0" /></a>
+    <div style="height: 87px; text-align: right; background: url(top1_2.jpg) no-repeat right;">
+        <p style="font-size: 16px; font-weight: bold; color: #fff; margin: 37px 24px 0 0; padding-top: 35px;">TD-W9970</p>
+        <p style="font-size: 11px; color: #fff; margin-right: 24px;">UnTethered Firmware v2.1 (GitHub Edition)</p>
     </div>
-    <img src="../img/login/top2.jpg" style="height: 3px; width: 100%; display: block;" />
+    <img src="top2.jpg" style="height: 3px; width: 100%; display: block;" />
 </div>
 
 <div id="loginSection" class="loginBox">
-    <div class="noteDiv">
-        <span id="tip">Enter Router Details to UnTether</span>
+    <div class="noteDiv" style="margin-bottom: 10px;">
+        <span id="tip" style="font-size: 12px; font-weight: bold; color: #666;">MODEM ACCESS REQUIRED</span>
     </div>
-    <div class="panelThre" align="center">
-        <div class="picDiv">
-            <ul>
-                <li class="router-ip-box"><input id="routerIP" type="text" value="192.168.1.1" title="Router IP Address"/></li>
-                <li id="unLi" class="unLi"><input class="text" id="userName" type="text" value="admin" maxlength="15"/></li>
-                <li id="pwLi" class="pwLi"><input class="text" id="pcPassword" type="password" value="admin" maxlength="15"/></li>
-            </ul>
-            <label id="loginBtn" class="loginBtn" onclick="doUnTetheredDump()"></label>
-            <div>
-                <label id="copyright">Copyright © 2026 UnTethered. All Rights Reserved.</label>
-            </div>
+    <div class="picDiv">
+        <ul>
+            <li style="margin-bottom: 5px;">
+                <input id="routerIP" type="text" value="192.168.1.1" style="border: 1px solid #ccc; width: 210px; text-align: center; border-radius: 3px; height: 25px;"/>
+            </li>
+            <li class="unLi"><input class="text" id="userName" type="text" value="admin"/></li>
+            <li class="pwLi"><input class="text" id="pcPassword" type="password" value="admin"/></li>
+        </ul>
+        <button class="loginBtn" onclick="doLogin()"></button>
+        <div style="margin-top: 45px;">
+            <label id="copyright" style="font-size: 9px; color: #999;">Powered by UnTethered Deep-Dump Technology</label>
         </div>
     </div>
 </div>
 
-<div id="unTetheredDashboard">
-    <div class="dump-header">
-        <div><span class="live-pulse"></span><strong>UNTETHERED LIVE FEED</strong></div>
-        <button class="btn-refresh" onclick="location.reload()">TERMINATE SESSION</button>
+<div id="dashboard">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00A8FF; margin-bottom: 20px; padding-bottom: 10px;">
+        <h2 style="margin:0; color: #0072bc;">UnTethered LIVE DASHBOARD</h2>
+        <div style="background: #00A8FF; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">Mode: FULL DUMP</div>
     </div>
 
     <div class="grid">
         <div class="card">
-            <h3>System Diagnostics</h3>
-            <div class="data-row"><span class="label">Hardware Revision:</span><span class="value">v4.0</span></div>
-            <div class="data-row"><span class="label">CPU Usage:</span><span class="value" id="val-cpu">12%</span></div>
-            <div class="data-row"><span class="label">Memory Free:</span><span class="value">83.8 MB</span></div>
-            <div class="data-row"><span class="label">System Temp:</span><span class="value">41.2°C</span></div>
-            <div class="data-row"><span class="label">Uptime:</span><span class="value">01:44:12:09</span></div>
+            <h3>System Health</h3>
+            <div class="row"><span class="label">CPU Core 0:</span><span class="value live-green" id="val-cpu">8%</span></div>
+            <div class="bar" id="trafficBar" style="width: 8%;"></div>
+            <div class="row"><span class="label">Memory Usage:</span><span class="value">41.2MB / 128MB</span></div>
+            <div class="row"><span class="label">Kernel Temp:</span><span class="value">43.8 °C</span></div>
+            <div class="row"><span class="label">Flash Bad Blocks:</span><span class="value">0</span></div>
         </div>
 
         <div class="card">
-            <h3>DSL Deep Info</h3>
-            <div class="data-row"><span class="label">Line Standard:</span><span class="value">VDSL2-17a</span></div>
-            <div class="data-row"><span class="label">SNR Margin (D/U):</span><span class="value">8.1 / 10.4 dB</span></div>
-            <div class="data-row"><span class="label">Attenuation:</span><span class="value">12.2 dB</span></div>
-            <div class="data-row"><span class="label">Interleave Depth:</span><span class="value">1552</span></div>
-            <div class="data-row"><span class="label">CRC Errors (Total):</span><span class="value">12</span></div>
+            <h3>DSL Deep Metrics</h3>
+            <div class="row"><span class="label">Download Speed:</span><span class="value live-green" id="val-down">72.10 Mbps</span></div>
+            <div class="row"><span class="label">Upload Speed:</span><span class="value live-green" id="val-up">18.45 Mbps</span></div>
+            <div class="row"><span class="label">SNR Margin (Down):</span><span class="value">8.4 dB</span></div>
+            <div class="row"><span class="label">Line Attenuation:</span><span class="value">11.5 dB</span></div>
+            <div class="row"><span class="label">CRC Errors (24h):</span><span class="value">0</span></div>
         </div>
 
         <div class="card">
-            <h3>WAN & Routing</h3>
-            <div class="data-row"><span class="label">MAC:</span><span class="value">BC:0F:2B:AA:BB:CC</span></div>
-            <div class="data-row"><span class="label">MTU Size:</span><span class="value">1492</span></div>
-            <div class="data-row"><span class="label">Gateway IP:</span><span class="value">100.64.0.1</span></div>
-            <div class="data-row"><span class="label">Primary DNS:</span><span class="value">8.8.8.8</span></div>
-            <div class="data-row"><span class="label">Traffic Rate:</span><span class="value" id="val-packets">2401 pkt/s</span></div>
+            <h3>Live Packet Sniffer</h3>
+            <div class="monitor-box" id="liveLogs">
+                <div>Waiting for packets...</div>
+            </div>
+            <div class="row" style="margin-top:10px;"><span class="label">Active TCP Hooks:</span><span class="value">142</span></div>
         </div>
+    </div>
 
-        <div class="card">
-            <h3>Hidden Parameters</h3>
-            <div class="data-row"><span class="label">Bridge Mode:</span><span class="value">Off</span></div>
-            <div class="data-row"><span class="label">Hardware NAT:</span><span class="value">Accelerated</span></div>
-            <div class="data-row"><span class="label">IGMP Snooping:</span><span class="value">Enabled</span></div>
-            <div class="data-row"><span class="label">WiFi Noise Floor:</span><span class="value">-92 dBm</span></div>
-            <div class="data-row"><span class="label">Active Sessions:</span><span class="value">512 / 2048</span></div>
-        </div>
+    <div class="card" style="margin-top: 20px;">
+        <h3>Connected Devices (L2 Discovery)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Device Name</th>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                    <th>Connection</th>
+                    <th>Signal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Windows-PC-Master</td>
+                    <td>192.168.1.102</td>
+                    <td>F4:D4:88:AA:BB:CC</td>
+                    <td>Ethernet 1Gbps</td>
+                    <td><span style="color:green">Full</span></td>
+                </tr>
+                <tr>
+                    <td>iPhone-15-Pro</td>
+                    <td>192.168.1.105</td>
+                    <td>AC:22:01:44:EE:FF</td>
+                    <td>WiFi 5GHz</td>
+                    <td><span style="color:green">-52 dBm</span></td>
+                </tr>
+                <tr>
+                    <td>Smart-TV-4K</td>
+                    <td>192.168.1.110</td>
+                    <td>00:1A:2B:3C:4D:5E</td>
+                    <td>WiFi 2.4GHz</td>
+                    <td><span style="color:orange">-78 dBm</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 </body>
-  </html>
-  
+</html>
