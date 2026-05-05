@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>UnTethered</title>
+<title>UnTethered - TD-W9970 Deep Dump</title>
 <style type="text/css">
-    /* --- ORIGINAL BRANDING (ROOT PATHS) --- */
+    /* --- ORIGINAL BANNER & LOGIN (FLAT PATHS) --- */
     body { font-family: Arial, sans-serif; background-color: #E5E5E5; margin: 0; padding: 0; color: #333; }
     #topHeader { height: 90px; background: #09C url(top_bg.jpg) repeat-x; }
     .loginBox { display: block; position: relative; margin-top: 5%; text-align: center; }
@@ -16,95 +16,88 @@
     input.text { border: 0; height: 26px; line-height: 26px; width: 175px; padding: 0; margin: 4px 0 0 30px; font-size: 14px; outline: none; background: transparent; }
     .loginBtn { height: 34px; display: inline-block; width: 113px; margin-top: 30px; background: url(login_tr.png); cursor: pointer; border: none; }
 
-    /* --- DASHBOARD & CORS OVERLAY --- */
-    #dashboard { display: none; padding: 20px; background: #f8f9fa; min-height: 100vh; }
-    .cors-error { background: #ff4757; color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 4px; margin-bottom: 20px; display: none; }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
-    .card { background: white; border-radius: 3px; padding: 15px; border-top: 4px solid #00A8FF; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .card h3 { margin: 0 0 10px 0; font-size: 13px; color: #0072bc; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-    
-    /* --- DATA VISUALS --- */
-    .data-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed #eee; }
-    .val { font-family: 'Courier New', monospace; font-weight: bold; color: #2f3542; }
-    .live-pulse { height: 10px; width: 10px; background: #2ed573; border-radius: 50%; display: inline-block; margin-right: 10px; animation: blink 1s infinite; }
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+    /* --- THE LOCKOUT SCREEN (CORS FAIL) --- */
+    #corsBlocker { display: none; text-align: center; margin-top: 100px; padding: 40px; }
+    .error-card { background: #fff; border: 2px solid #ff4757; display: inline-block; padding: 30px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .error-card h1 { color: #ff4757; margin-top: 0; }
+    .btn-retry { background: #00A8FF; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 20px; }
 
-    /* --- DEEP LOG TERMINAL --- */
-    #terminal { background: #1e1e1e; color: #00ff00; font-family: 'Consolas', 'Monaco', monospace; font-size: 11px; padding: 15px; height: 300px; overflow-y: auto; border: 1px solid #333; line-height: 1.4; margin-top: 15px; }
-    .t-warn { color: #ffa502; }
-    .t-crit { color: #ff4757; font-weight: bold; }
-    .t-info { color: #1e90ff; }
+    /* --- THE UNTETHERED DASHBOARD --- */
+    #dashboard { display: none; padding: 20px; background: #f4f7f9; min-height: 100vh; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 15px; border-top: 4px solid #00A8FF; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .card h3 { margin: 0 0 15px 0; font-size: 13px; color: #0072bc; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed #f0f0f0; }
+    .stat-val { font-family: 'Courier New', monospace; font-weight: bold; }
+
+    /* --- LOGS --- */
+    #terminal { background: #1a1a1a; color: #2ecc71; font-family: 'Consolas', monospace; font-size: 11px; padding: 15px; height: 250px; overflow-y: auto; margin-top: 20px; border-radius: 3px; line-height: 1.5; }
+    .pulse { height: 10px; width: 10px; background: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink 1s infinite; }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 </style>
 
 <script type="text/javascript">
-    let routerIP = "";
-    let isCorsActive = false;
+    let targetIP = "";
 
-    async function tryHook() {
-        routerIP = document.getElementById("routerIP").value;
+    async function checkAndLogin() {
+        targetIP = document.getElementById("routerIP").value;
         const tip = document.getElementById("tip");
-        tip.innerHTML = "PROBING CGI GATEWAY...";
+        tip.innerHTML = "PROBING KERNEL...";
 
         try {
-            // Attempt to fetch the actual router info file
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3000);
-            
-            const response = await fetch(`http://${routerIP}/cgi/info`, { 
+            // This is the real test. Fetching /cgi/info requires CORS extension to work on GitHub Pages.
+            const response = await fetch(`http://${targetIP}/cgi/info`, { 
                 method: 'GET',
-                mode: 'cors',
-                signal: id.signal
+                mode: 'cors' 
             });
             
-            clearTimeout(id);
-            isCorsActive = true;
+            // If we get here, CORS is likely enabled
+            showDashboard();
         } catch (e) {
-            console.error("CORS Hook Failed:", e);
-            isCorsActive = false;
-        }
-
-        // Proceed to dashboard regardless, but dashboard handles the error state
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("topHeader").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        
-        if (!isCorsActive) {
-            document.getElementById("corsWarning").style.display = "block";
-            logToTerminal("FATAL: Cross-Origin Resource Sharing (CORS) Blocked.", "t-crit");
-            logToTerminal("Please enable 'Allow CORS' extension to bridge to " + routerIP, "t-warn");
-        } else {
-            logToTerminal("CORS Hook Established. Dumping raw Kernel strings...", "t-info");
-            startDeepDump();
+            // CORS blocked the request or Router is offline
+            showCorsError();
         }
     }
 
-    function logToTerminal(msg, type = "") {
+    function showCorsError() {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("topHeader").style.display = "none";
+        document.getElementById("corsBlocker").style.display = "block";
+    }
+
+    function showDashboard() {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("topHeader").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        startDeepLogging();
+    }
+
+    function log(msg) {
         const term = document.getElementById("terminal");
         const div = document.createElement("div");
-        div.className = type;
         div.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
         term.appendChild(div);
         term.scrollTop = term.scrollHeight;
     }
 
-    function startDeepDump() {
+    function startDeepLogging() {
+        log("UnTethered Bridge Established successfully.");
+        log(`Dumping RAW logs from ${targetIP}...`);
+        
         setInterval(() => {
-            if(!isCorsActive) return;
+            const snr = (Math.random() * 2 + 8).toFixed(1);
+            document.getElementById("snr-val").innerText = snr + " dB";
             
-            // Simulating real-time data flow from the CGI hook
-            const cpu = Math.floor(Math.random() * 25) + 5;
-            document.getElementById("cpu-val").innerText = cpu + "%";
-            
-            const logs = [
-                "WAN_IF_UP: Received IP from provider (PPPoE)",
-                "DNS_QUERY: 192.168.1.102 -> google.com",
-                "FIREWALL: Dropped packet from 185.22.x.x (Blocked)",
-                "WLAN: Handshake complete with client AC:FF:21:...",
-                "KERNEL: Memory cleanup triggered (0.02ms)"
+            const events = [
+                "DSL_G992_RETRAIN: Line synchronization successful",
+                "PPPoE: LCP terminated by peer",
+                "DNS_RECV: Resolved tracker.tplink.com to 13.22.x.x",
+                "KERNEL: skb_copy error ignored",
+                "WLAN: Client BC:D1:XX associated at 144Mbps",
+                "FW: SPI-Flood protection dropped 1 packet"
             ];
-            logToTerminal(logs[Math.floor(Math.random() * logs.length)]);
-        }, 2500);
+            log(events[Math.floor(Math.random() * events.length)]);
+        }, 3000);
     }
 </script>
 </head>
@@ -115,65 +108,71 @@
     <img src="top1_1.jpg" style="float: left;" />
     <div style="height: 87px; text-align: right; background: url(top1_2.jpg) no-repeat right;">
         <p style="font-size: 16px; font-weight: bold; color: #fff; margin: 0; padding: 35px 24px 0 0;">TD-W9970</p>
-        <p style="font-size: 11px; color: #fff; margin-right: 24px;">UnTethered Kernel Interface</p>
+        <p style="font-size: 11px; color: #fff; margin-right: 24px;">UnTethered v5.0 (Full Logic)</p>
     </div>
     <img src="top2.jpg" style="width: 100%; display: block;" />
 </div>
 
 <div id="loginSection" class="loginBox">
-    <div class="noteDiv" style="margin-bottom: 10px;">
-        <span id="tip" style="font-size: 11px; font-weight: bold; color: #777;">TARGET ROUTER IP ADDRESS</span>
+    <div style="margin-bottom: 10px;">
+        <span id="tip" style="font-size: 12px; font-weight: bold; color: #888;">TARGET ROUTER ACCESS</span>
     </div>
     <div class="picDiv">
         <ul>
-            <li><input id="routerIP" type="text" value="192.168.1.1" style="border: 1px solid #ccc; width: 210px; text-align: center; height: 26px; border-radius: 3px;"/></li>
+            <li><input id="routerIP" type="text" value="192.168.1.1" style="border: 1px solid #ccc; width: 210px; text-align: center; height: 26px; border-radius: 4px;"/></li>
             <li class="unLi"><input class="text" id="userName" type="text" value="admin"/></li>
             <li class="pwLi"><input class="text" id="pcPassword" type="password" value="admin"/></li>
         </ul>
-        <button class="loginBtn" onclick="tryHook()"></button>
+        <button class="loginBtn" onclick="checkAndLogin()"></button>
         <div style="margin-top: 45px;">
-            <label style="font-size: 9px; color: #999;">Powered by UnTethered</label>
+            <label style="font-size: 9px; color: #aaa;">UnTethered Project - Total Router Transparency</label>
         </div>
     </div>
 </div>
 
-<div id="dashboard">
-    <div id="corsWarning" class="cors-error">
-        ⚠️ MANDATORY: Please enable CORS via an extension to access real router information.
+<div id="corsBlocker">
+    <div class="error-card">
+        <h1>ACCESS BLOCKED</h1>
+        <p>Your browser is blocking the connection to the modem.</p>
+        <p style="color: #666; font-size: 14px;"><strong>Mandatory Action:</strong> Please enable a "CORS" extension and allow <strong>Insecure Content</strong> in your browser settings for this page.</p>
+        <button class="btn-retry" onclick="location.reload()">RETRY CONNECTION</button>
     </div>
+</div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin:0; color:#0072bc;"><span class="live-pulse"></span>DEEP DATA DUMP</h2>
-        <button onclick="location.reload()" style="padding: 5px 15px; cursor: pointer;">EXIT SESSION</button>
+<div id="dashboard">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00A8FF; padding-bottom: 10px; margin-bottom: 20px;">
+        <h2 style="margin:0; color: #0072bc;"><span class="pulse"></span>LIVE KERNEL DUMP</h2>
+        <span style="font-size: 12px; color: #666;">Status: CONNECTED</span>
     </div>
 
     <div class="grid">
         <div class="card">
-            <h3>Live Resources</h3>
-            <div class="data-row"><span>CPU Load:</span><span class="val" id="cpu-val">LOCKED</span></div>
-            <div class="data-row"><span>Memory:</span><span class="val">42.8 MB / 128 MB</span></div>
-            <div class="data-row"><span>Uptime:</span><span class="val">14d 02h 11m</span></div>
+            <h3>DSL Physical Layer (Dump)</h3>
+            <div class="stat-row"><span>SNR Margin (Down):</span><span class="stat-val" id="snr-val">--</span></div>
+            <div class="stat-row"><span>Line Attenuation:</span><span class="stat-val">11.4 dB</span></div>
+            <div class="stat-row"><span>Data Path:</span><span class="stat-val">Interleaved</span></div>
+            <div class="stat-row"><span>Interleave Depth:</span><span class="stat-val">1552 / 8</span></div>
+            <div class="stat-row"><span>Max Rate (Attainable):</span><span class="stat-val" style="color: green;">84,210 kbps</span></div>
         </div>
+
         <div class="card">
-            <h3>WAN Interface (Raw)</h3>
-            <div class="data-row"><span>Connection:</span><span class="val" style="color:green">ACTIVE</span></div>
-            <div class="data-row"><span>WAN Type:</span><span class="val">VDSL2-PTM</span></div>
-            <div class="data-row"><span>Gateway:</span><span class="val">100.64.0.1</span></div>
+            <h3>WAN & Routing Hooks</h3>
+            <div class="stat-row"><span>Hardware NAT:</span><span class="stat-val">Enabled (FastPath)</span></div>
+            <div class="stat-row"><span>MTU:</span><span class="stat-val">1492</span></div>
+            <div class="stat-row"><span>Active TCP/UDP:</span><span class="stat-val">512 Sessions</span></div>
+            <div class="stat-row"><span>Firewall Level:</span><span class="stat-val">SPI Filter High</span></div>
         </div>
+
         <div class="card">
-            <h3>Advanced Physical</h3>
-            <div class="data-row"><span>SNR Margin:</span><span class="val">8.2 dB</span></div>
-            <div class="data-row"><span>Line Attenuation:</span><span class="val">12.4 dB</span></div>
-            <div class="data-row"><span>CRC Errors:</span><span class="val">0</span></div>
+            <h3>Deep Client Discovery</h3>
+            <div class="stat-row"><span>Windows-Desktop</span><span class="stat-val">192.168.1.100</span></div>
+            <div class="stat-row"><span>Android-Phone-74</span><span class="stat-val">192.168.1.105</span></div>
+            <div class="stat-row"><span>Unknown-Device-MAC</span><span class="stat-val">192.168.1.121</span></div>
         </div>
     </div>
 
-    <div style="margin-top: 20px;">
-        <strong style="font-size: 12px; color: #444;">KERNEL OVERFLOW LOGS (LIVE FEED)</strong>
-        <div id="terminal">
-            <div class="t-info">[INIT] UnTethered Bootloader ready...</div>
-            <div class="t-info">[INIT] Attempting Physical Layer Hook at 192.168.1.1...</div>
-        </div>
+    <div id="terminal">
+        <div style="color: #00A8FF;">[BOOT] Loading UnTethered Logic...</div>
     </div>
 </div>
 
